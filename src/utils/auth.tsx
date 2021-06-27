@@ -9,12 +9,33 @@ interface Token {
 }
 
 /**
+ * TODO
+ * Code a proper api module to diff between envs
+ */
+const refreshToken = async () => {
+    try {
+        const response = await fetch('http://localhost:4000/refresh_token', {
+            method: 'POST',
+            credentials: 'include',
+        });
+        const body = await response.json();
+        const accessToken = body?.accessToken || '';
+        console.log('refreshToken ~ accessToken', accessToken);
+
+        return accessToken;
+    } catch (err) {
+        console.log('refreshToken ~ err', err);
+        return '';
+    }
+};
+
+/**
  *
  * @returns the access token with a bearer prefix
  */
-export const getAccessTokenFromLocal = () => {
+export const getAccessTokenFromLocal = async () => {
     try {
-        const accessToken = localStorage.getItem(ACCESS_TOKEN) || '';
+        let accessToken = localStorage.getItem(ACCESS_TOKEN) || '';
 
         if (!accessToken) return '';
 
@@ -23,7 +44,7 @@ export const getAccessTokenFromLocal = () => {
         const now = Date.now();
 
         if (now >= exp * 1000) {
-            // TODO refresh_token
+            accessToken = await refreshToken();
         }
 
         const withBearer = `bearer ${accessToken}`;

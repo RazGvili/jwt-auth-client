@@ -7,18 +7,19 @@ import {
 } from '@apollo/client';
 import { getAccessTokenFromLocal } from './auth';
 import { onError } from '@apollo/client/link/error';
+import { setContext } from '@apollo/client/link/context';
 
 const serverURL = String(process.env.REACT_APP_SERVER_URL);
 
-const authMiddleware = new ApolloLink((operation, forward) => {
-    operation.setContext(async ({ headers = {} }) => ({
+const authMiddleware = setContext(async (_, { headers, ...context }) => {
+    const accessToken = await getAccessTokenFromLocal();
+    return {
         headers: {
             ...headers,
-            authorization: await getAccessTokenFromLocal(),
+            ...(accessToken ? { authorization: accessToken } : {}),
         },
-    }));
-
-    return forward(operation);
+        ...context,
+    };
 });
 
 // Log any GraphQL errors or network error that occurred
@@ -46,7 +47,7 @@ export const initApolloClient = () => {
         credentials: 'include',
 
         // Send the accessToken in the headers for every request.
-        link: from([authMiddleware, errorLink, httpLink]),
+        link: from([errorLink, authMiddleware, httpLink]),
     });
     return client;
 };
