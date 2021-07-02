@@ -3,7 +3,8 @@ import Chip from '@material-ui/core/Chip';
 import FaceIcon from '@material-ui/icons/Face';
 
 interface Props {
-    list: string[];
+    list: { email: string; id: number }[];
+    userId: undefined | number;
 }
 
 /**
@@ -35,6 +36,7 @@ const styles: { [name: string]: React.CSSProperties } = {
 
 export const ChipList: React.FC<Props> = (props) => {
     const list = props.list;
+    const userId = props.userId;
 
     if (!Array.isArray(list)) {
         return <div></div>;
@@ -46,9 +48,10 @@ export const ChipList: React.FC<Props> = (props) => {
                 return (
                     <Chip
                         style={styles.item}
-                        key={item}
+                        key={item.id}
                         icon={<FaceIcon />}
-                        label={item}
+                        label={item.email}
+                        color={userId === item.id ? 'primary' : 'default'}
                     />
                 );
             })}

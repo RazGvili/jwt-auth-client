@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
 import { useHistory } from 'react-router-dom';
-import { useByeQuery } from '../generatedGraphQL/graphql';
+import { useMeQuery } from '../generatedGraphQL/graphql';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -14,9 +14,6 @@ const useStyles = makeStyles((theme) => ({
     },
     menuButton: {
         marginRight: theme.spacing(2),
-    },
-    title: {
-        flexGrow: 1,
     },
 }));
 
@@ -26,34 +23,42 @@ export const Header: React.FC<Props> = () => {
     const classes = useStyles();
     const history = useHistory();
 
-    const { data, error, loading } = useByeQuery();
-    console.log('data', data);
-    console.log('error', error);
+    const { data } = useMeQuery();
+
+    let userId: undefined | number;
+    if (data?.me?.id) {
+        userId = data?.me?.id;
+    }
 
     return (
         <div className={classes.root}>
             <AppBar position="static">
-                <Toolbar>
+                <Toolbar
+                    style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
                     <Typography
                         variant="h6"
-                        className={classes.title}
                         onClick={() => history.push('/')}
                         style={{ cursor: 'pointer' }}
                     >
                         🚀
                     </Typography>
-                    <Button
-                        color="inherit"
-                        onClick={() => history.push('/Login')}
-                    >
-                        Login
-                    </Button>
-                    <Button
-                        color="inherit"
-                        onClick={() => history.push('/Register')}
-                    >
-                        Register
-                    </Button>
+                    <div>
+                        {!userId && (
+                            <Button
+                                color="inherit"
+                                onClick={() => history.push('/Login')}
+                            >
+                                Login
+                            </Button>
+                        )}
+                        <Button
+                            color="inherit"
+                            onClick={() => history.push('/Register')}
+                        >
+                            Register
+                        </Button>
+                    </div>
                 </Toolbar>
             </AppBar>
         </div>

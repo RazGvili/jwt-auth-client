@@ -5,6 +5,11 @@ import { Register } from './pages/Register';
 import { Login } from './pages/Login';
 import { Home } from './pages/Home';
 
+/**
+ * TODO -
+ * 1. Add Redux toolkit and save me endpoint there/
+ *
+ */
 export const Routes: React.FC = () => {
     return (
         <BrowserRouter>

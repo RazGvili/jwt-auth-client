@@ -3,6 +3,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { useLoginMutation } from '../generatedGraphQL/graphql';
 import { ACCESS_TOKEN } from '../utils/auth';
+import { useHistory } from 'react-router-dom';
 
 interface Props {}
 
@@ -27,6 +28,8 @@ const styles: { [name: string]: React.CSSProperties } = {
  * 3. move login to utils
  */
 export const Login: React.FC<Props> = () => {
+    const history = useHistory();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [login] = useLoginMutation();
@@ -39,11 +42,18 @@ export const Login: React.FC<Props> = () => {
                     password,
                 },
             });
+            console.log('onSubmit ~ response', response);
             const accessToken = response.data?.login.accessToken;
 
             if (accessToken) {
                 localStorage.setItem(ACCESS_TOKEN, accessToken);
+                history.push('/');
             }
+
+            // TODO handle failed case
+            // if (!accessToken) {
+
+            // }
         } catch (err) {
             console.log('onSubmit ~ err', err);
         }

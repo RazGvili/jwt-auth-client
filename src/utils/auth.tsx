@@ -36,7 +36,6 @@ const refreshToken = async () => {
 export const getAccessTokenFromLocal = async () => {
     try {
         let accessToken = localStorage.getItem(ACCESS_TOKEN) || '';
-
         if (!accessToken) return '';
 
         // Will throw an error in case of invalid token
